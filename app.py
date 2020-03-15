@@ -34,8 +34,8 @@ class ProductSchema(ma.Schema):
     fields = ('id', 'name', 'description', 'price', 'qty')
 
 # Init schema
-product_schema = ProductSchema(strict=True)
-products_schema = ProductSchema(many=True, strict=True)
+product_schema = ProductSchema()
+products_schema = ProductSchema(many=True)
 
 # Create a Product
 @app.route('/product', methods=['POST'])
@@ -47,7 +47,7 @@ def add_product():
 
   new_product = Product(name, description, price, qty)
 
-  db.session.add(new_product)
+  db.session.add(new_product)  
   db.session.commit()
 
   return product_schema.jsonify(new_product)
@@ -57,7 +57,7 @@ def add_product():
 def get_products():
   all_products = Product.query.all()
   result = products_schema.dump(all_products)
-  return jsonify(result.data)
+  return jsonify(result)
 
 # Get Single Products
 @app.route('/product/<id>', methods=['GET'])
@@ -90,9 +90,11 @@ def delete_product(id):
   product = Product.query.get(id)
   db.session.delete(product)
   db.session.commit()
-
+  
   return product_schema.jsonify(product)
 
-# Run Server
+# https://youtu.be/PTZiDnuC86g?list=PLillGF-RfqbbJYRaNqeUzAb7QY-IqBKRx&t=1486
+
+#Run Server
 if __name__ == '__main__':
   app.run(debug=True)
